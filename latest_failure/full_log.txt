@@ -1,1 +1,1 @@
-FALTA el secret/env requerido: MELTWATER_URL
+FALTA el secret/env requerido: WORKER_INGEST_URL
