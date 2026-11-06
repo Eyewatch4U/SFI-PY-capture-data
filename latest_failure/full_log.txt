@@ -1,1 +1,12 @@
-FALTA el secret/env requerido: WORKER_INGEST_URL
+→ Navegando a Meltwater...
+  page.url = https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
+  page.title = Generating
+→ Password gate detectado, enviando passcode...
+  Post-reload: Public Report
+✓ URL .gz detectada
+→ Esperando .gz (hasta 300s, sin recargas agresivas)...
+  señal=20799587  size=25173523B
+✓ Snapshot CON datos (señal=20799587).
+→ POST directo al worker /ingest ...
+✗ Worker HTTP 500: {"ok":false,"error":"KV put() limit exceeded for the day."}
+El worker devolvió status inesperado: 500
