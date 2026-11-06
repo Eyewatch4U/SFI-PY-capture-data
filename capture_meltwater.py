@@ -2,12 +2,12 @@
 Meltwater Auto-Capture v3
 =========================
 Captura la URL `.json.gz` fresca del snapshot de un shareable report de
-Meltwater y la POSTea al webhook de Make.com.
+Meltwater y la POSTea directo al worker (/ingest).
 
 Clon estándar del proyecto (BROU/Temas/Bancos). Todo por variables de entorno
 (secrets del repo); si falta un secret, falla fuerte y claro. Espera + backoff
 en vez de reloads agresivos (cada reload REINICIA la generación del snapshot).
-Valida señal > 0 antes de mandar a Make, para no pisar 'latest' con un vacío.
+Valida señal > 0 antes de mandar al worker, para no pisar 'latest' con un vacío.
 """
 
 import asyncio
@@ -18,6 +18,7 @@ import gzip
 import time
 import random
 import urllib.request
+import urllib.error
 import traceback
 from pathlib import Path
 from urllib.parse import urlparse
@@ -33,7 +34,10 @@ def _req(name: str) -> str:
 
 MELTWATER_URL = _req("MELTWATER_URL")
 MELTWATER_PASSWORD = os.environ.get("MELTWATER_PASSWORD", "")
-MAKE_WEBHOOK = _req("MAKE_WEBHOOK_URL")
+# Envio directo al worker (sin Make). WORKER_INGEST_URL = endpoint /ingest del
+# worker; SYNC_TOKEN debe coincidir con el secret SYNC_TOKEN del worker.
+WORKER_INGEST_URL = _req("WORKER_INGEST_URL")
+SYNC_TOKEN = os.environ.get("SYNC_TOKEN", "MAKE2026PY")
 
 MAX_WAIT_SECONDS = int(os.environ.get("MAX_WAIT_SECONDS", "300"))
 POLL_INTERVAL_MS = int(os.environ.get("POLL_INTERVAL_MS", "5000"))
@@ -70,7 +74,7 @@ async def fetch_gz_signal(page, url: str):
     resp = await page.request.get(url, timeout=45_000)
     if not resp.ok:
         print(f"  GET gz status {resp.status}", flush=True)
-        return -1, 0
+        return -1, 0, None
     body = await resp.body()
     size = len(body)
     if len(body) >= 2 and body[0] == 0x1F and body[1] == 0x8B:
@@ -78,13 +82,13 @@ async def fetch_gz_signal(page, url: str):
             body = gzip.decompress(body)
         except Exception as e:
             print(f"  gzip.decompress fallo: {e}", flush=True)
-            return -1, size
+            return -1, size, None
     try:
         data = json.loads(body.decode("utf-8", errors="replace"))
     except Exception as e:
         print(f"  json.loads fallo: {e}", flush=True)
-        return -1, size
-    return compute_signal(data), size
+        return -1, size, None
+    return compute_signal(data), size, data
 
 
 def _proxy_kwargs():
@@ -181,13 +185,15 @@ async def capture_gz_url() -> str:
         deadline = time.time() + MAX_WAIT_SECONDS
         last_reload = time.time()
         validated_url = None
+        validated_data = None
 
         while time.time() < deadline:
             if gz["url"]:
-                signal, size = await fetch_gz_signal(page, gz["url"])
+                signal, size, data = await fetch_gz_signal(page, gz["url"])
                 print(f"  señal={signal}  size={size}B", flush=True)
                 if signal > 0:
                     validated_url = gz["url"]
+                    validated_data = data
                     print(f"✓ Snapshot CON datos (señal={signal}).", flush=True)
                     break
                 print("⚠ Snapshot vacío (regenerando). Sigo esperando un .gz nuevo...", flush=True)
@@ -227,20 +233,26 @@ async def capture_gz_url() -> str:
             f"502 persistente = Meltwater bloquea la IP de salida (datacenter). "
             f"Correr en self-hosted runner (IP residencial) o con PROXY_URL residencial."
         )
-    return validated_url
+    return validated_url, validated_data
 
 
-def post_to_make(gz_url: str) -> int:
-    print("→ POST a Make.com...", flush=True)
-    payload = json.dumps({"url": gz_url, "sync": True}).encode("utf-8")
+def post_to_worker(data: dict) -> int:
+    print("→ POST directo al worker /ingest ...", flush=True)
+    payload = json.dumps(data).encode("utf-8")
     req = urllib.request.Request(
-        MAKE_WEBHOOK, data=payload,
-        headers={"Content-Type": "application/json"}, method="POST",
+        WORKER_INGEST_URL, data=payload,
+        headers={"Content-Type": "application/json", "x-sync-token": SYNC_TOKEN},
+        method="POST",
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        body = resp.read().decode("utf-8", errors="replace")[:200]
-        print(f"✓ Make.com respondió {resp.status}: {body}", flush=True)
-        return resp.status
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            body = resp.read().decode("utf-8", errors="replace")[:300]
+            print(f"✓ Worker respondió {resp.status}: {body}", flush=True)
+            return resp.status
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")[:300]
+        print(f"✗ Worker HTTP {e.code}: {body}", flush=True)
+        return e.code
 
 
 async def main():
@@ -249,10 +261,10 @@ async def main():
             d = random.randint(0, JITTER_SECONDS)
             print(f"→ Jitter: durmiendo {d}s antes de arrancar...", flush=True)
             await asyncio.sleep(d)
-        gz_url = await capture_gz_url()
-        status = post_to_make(gz_url)
+        gz_url, data = await capture_gz_url()
+        status = post_to_worker(data)
         if status not in (200, 202):
-            sys.exit(f"Make.com devolvió status inesperado: {status}")
+            sys.exit(f"El worker devolvió status inesperado: {status}")
         print("✓ Pipeline completo OK.", flush=True)
     except SystemExit:
         raise
