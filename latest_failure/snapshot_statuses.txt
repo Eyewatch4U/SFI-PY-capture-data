@@ -63,5 +63,8 @@
 404 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
 404 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
 404 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
-404 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
-404 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
+200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
+200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
+308 https://app.meltwater.com/a/shareable-reports/?report_id=UwB9MeLikQEa38TAR4rjQPpK&interaction=true&tab=0&snapshot_token=
+200 https://app.meltwater.com/a/shareable-reports?report_id=UwB9MeLikQEa38TAR4rjQPpK&interaction=true&tab=0&snapshot_token=a
+200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/insight-pages/snapshot?snapshot_token=aFoTqvNKhkGc9fQRB
