@@ -5,56 +5,17 @@
   Post-reload: Generating
 → Esperando .gz (hasta 300s, sin recargas agresivas)...
 ✓ URL .gz detectada
-  señal=26455628  size=24548945B
-✓ Snapshot CON datos (señal=26455628).
+  señal=19591148  size=24704204B
+✓ Snapshot CON datos (señal=19591148).
 → POST directo al worker /ingest ...
-
-✗ ERROR: <urlopen error The write operation timed out>
-Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 1361, in do_open
-    h.request(req.get_method(), req.selector, req.data, headers,
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/http/client.py", line 1351, in request
-    self._send_request(method, url, body, headers, encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/http/client.py", line 1397, in _send_request
-    self.endheaders(body, encode_chunked=encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/http/client.py", line 1346, in endheaders
-    self._send_output(message_body, encode_chunked=encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/http/client.py", line 1145, in _send_output
-    self.send(chunk)
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/http/client.py", line 1067, in send
-    self.sock.sendall(data)
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/ssl.py", line 1286, in sendall
-    v = self.send(byte_view[count:])
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/ssl.py", line 1255, in send
-    return self._sslobj.write(data)
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-TimeoutError: The write operation timed out
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/runner/work/SFI-PY-capture-data/SFI-PY-capture-data/capture_meltwater.py", line 275, in main
-    status = post_to_worker(data)
-             ^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/SFI-PY-capture-data/SFI-PY-capture-data/capture_meltwater.py", line 258, in post_to_worker
-    with urllib.request.urlopen(req, timeout=120) as resp:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 216, in urlopen
-    return opener.open(url, data, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 519, in open
-    response = self._open(req, data)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 536, in _open
-    result = self._call_chain(self.handle_open, protocol, protocol +
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 496, in _call_chain
-    result = func(*args)
-             ^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 1404, in https_open
-    return self.do_open(http.client.HTTPSConnection, req,
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/urllib/request.py", line 1364, in do_open
-    raise URLError(err)
-urllib.error.URLError: <urlopen error The write operation timed out>
+✗ Worker HTTP 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+<hr><center>cloudflare</center>
+</body>
+</html>
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<!-- a padding to disable MSIE and Chrome friendly error page -->
+<
+El worker devolvió status inesperado: 504

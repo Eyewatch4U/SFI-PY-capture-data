@@ -7,5 +7,5 @@
 200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
 200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/snapshot
 308 https://app.meltwater.com/a/shareable-reports/?report_id=UwB9MeLikQEa38TAR4rjQPpK&interaction=true&tab=0&snapshot_token=
-200 https://app.meltwater.com/a/shareable-reports?report_id=UwB9MeLikQEa38TAR4rjQPpK&interaction=true&tab=0&snapshot_token=o
-200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/insight-pages/snapshot?snapshot_token=o8nmG03yo9big3H1l
+200 https://app.meltwater.com/a/shareable-reports?report_id=UwB9MeLikQEa38TAR4rjQPpK&interaction=true&tab=0&snapshot_token=B
+200 https://app.meltwater.com/report/public/UwB9MeLikQEa38TAR4rjQPpK/insight-pages/snapshot?snapshot_token=BCTy3boPJiXD3FJea
